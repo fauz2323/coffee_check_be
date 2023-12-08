@@ -45,8 +45,8 @@
                     @csrf
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="exampleFormControlInput1" class="form-label">Color</label>
-                            <input type="text" class="form-control" name="color">
+                            <label for="exampleFormControlInput1" class="form-label">Type</label>
+                            <input type="text" class="form-control" name="type">
                         </div>
                         <div class="mb-3">
                             <label for="exampleFormControlInput1" class="form-label">Red</label>

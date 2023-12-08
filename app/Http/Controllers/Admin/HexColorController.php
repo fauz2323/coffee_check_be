@@ -41,14 +41,14 @@ class HexColorController extends Controller
     function store(Request $request)
     {
         $request->validate([
-            'color' => 'required',
+            'type' => 'required',
             'red' => 'required',
             'green' => 'required',
             'blue' => 'required',
         ]);
 
         $hexColor = new HexColor();
-        $hexColor->color = $request->color;
+        $hexColor->type = $request->type;
         $hexColor->red = $request->red;
         $hexColor->green = $request->green;
         $hexColor->blue = $request->blue;
