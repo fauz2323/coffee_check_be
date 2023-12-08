@@ -13,7 +13,7 @@ class HistoryController extends Controller
         $history = HistoryCheck::where('user_id', auth()->user()->id)->get();
 
         return response()->json([
-            'history' => $history
+            'listHistory' => $history
         ]);
     }
 

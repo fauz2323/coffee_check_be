@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\HexColor;
 use App\Models\HistoryCheck;
+use App\Models\ImageHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Intervention\Image\Facades\Image;
@@ -30,7 +31,7 @@ class CheckController extends Controller
 
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $imageName = Uuid::uuid1() . '.' . $image->getClientOriginalExtension();
             $uploadPath = public_path('storage/images/');
 
             // Store the original image
@@ -77,12 +78,18 @@ class CheckController extends Controller
             $history = new HistoryCheck();
             $history->user_id = Auth::user()->id;
             $history->uuid = Uuid::uuid4();
-            $history->name = $imageName;
+            $history->name = $image->getClientOriginalName();
             $history->type = $iamgeRGBCount;
             $history->red = $red;
             $history->green = $green;
             $history->blue = $blue;
             $history->save();
+
+            $imageHistoty = new ImageHistory;
+            $imageHistoty->history_id = $history->id;
+            $imageHistoty->image = $imageName;
+            $imageHistoty->uuid = Uuid::uuid4();
+            $imageHistoty->save();
 
             return response()->json([
                 'message' => 'success upload image',
