@@ -17,7 +17,7 @@
                                 <thead>
                                     <tr>
                                         <th>No</th>
-                                        <th>Color</th>
+                                        <th>Type</th>
                                         <th>Red</th>
                                         <th>Green</th>
                                         <th>Blue</th>
@@ -88,8 +88,8 @@
                         searchable: false,
                     },
                     {
-                        data: 'color',
-                        name: 'color'
+                        data: 'type',
+                        name: 'type'
                     },
                     {
                         data: 'red',
