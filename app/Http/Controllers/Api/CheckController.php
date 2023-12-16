@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\HexColor;
 use App\Models\HistoryCheck;
 use App\Models\ImageHistory;
+use App\Services\ImageService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Intervention\Image\Facades\Image;
@@ -17,17 +18,9 @@ class CheckController extends Controller
     {
         $request->validate([
             'image' => 'required|max:2048',
-            'type' => 'required',
         ]);
 
-        $rgbType = HexColor::where('type', $request->type)->first();
-        $red = '';
-        $green = '';
-        $blue = '';
-
-        if (!$rgbType) {
-            return response()->json(['error' => 'Invalid type'], 400);
-        }
+        $imageService = new ImageService;
 
         if ($request->hasFile('image')) {
             $image = $request->file('image');
@@ -45,44 +38,17 @@ class CheckController extends Controller
             // Save the resized image
             $resizedImage->save($uploadPath . 'resized_' . $imageName);
 
-
-            $rgbData = [];
             $resizedImage = Image::make($uploadPath . 'resized_' . $imageName);
-            $width = $resizedImage->width();
-            $height = $resizedImage->height();
-            $yes = 0;
-            $no = 0;
-
-            for ($y = 0; $y < $height; $y++) {
-                for ($x = 0; $x < $width; $x++) {
-                    // Get the RGB values at each pixel
-                    $rgb = $resizedImage->pickColor($x, $y, 'array');
-                    $rgbData[$y][$x] = $rgb;
-                    if ($rgbType->red >= $rgb[0] && $rgbType->green >= $rgb[1] && $rgbType->blue >= $rgb[2]) {
-                        $yes++;
-                        $red = $rgb[0];
-                        $green = $rgb[1];
-                        $blue = $rgb[2];
-                    } else {
-                        $no++;
-                    }
-                }
-            }
-
-            if ($yes > $no) {
-                $iamgeRGBCount = 'image is ' . $request->type;
-            } else {
-                $iamgeRGBCount = 'image is not ' . $request->type;
-            }
+            $checkImage = $imageService->checkDominantColor($resizedImage);
 
             $history = new HistoryCheck();
             $history->user_id = Auth::user()->id;
             $history->uuid = Uuid::uuid4();
             $history->name = $image->getClientOriginalName();
-            $history->type = $iamgeRGBCount;
-            $history->red = $red;
-            $history->green = $green;
-            $history->blue = $blue;
+            $history->type = $checkImage['color'];
+            $history->red = $checkImage['r'];
+            $history->green = $checkImage['g'];
+            $history->blue = $checkImage['b'];
             $history->save();
 
             $imageHistoty = new ImageHistory;
@@ -94,10 +60,10 @@ class CheckController extends Controller
             return response()->json([
                 'message' => 'success upload image',
                 'image' => $imageName,
-                'dataType' => $iamgeRGBCount,
-                'red' => $red,
-                'green' => $green,
-                'blue' => $blue
+                'dataType' => $checkImage['color'],
+                'red' => $checkImage['r'],
+                'green' => $checkImage['g'],
+                'blue' => $checkImage['b'],
             ], 200);
         } else {
             return response()->json([
