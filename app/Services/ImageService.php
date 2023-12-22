@@ -36,7 +36,7 @@ final class ImageService
                 $red = $rgb[0];
                 $green = $rgb[1];
                 $blue = $rgb[2];
-                $threshold = 50; // Sesuaikan nilai sesuai preferensi
+                $threshold = 100; // Sesuaikan nilai sesuai preferensi
                 // Deteksi warna merah
                 if ($red > $green + $threshold && $red > $blue + $threshold) {
                     $r1 = $red;
@@ -46,7 +46,7 @@ final class ImageService
                 }
                 // Deteksi warna hijau
                 elseif (
-                    $green > $red + $threshold && $green > $blue + $threshold
+                    $green > $red && $green > $blue
                 ) {
                     $r2 = $red;
                     $g2 = $green;

@@ -12,6 +12,7 @@
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
         "laravel/ui": "^4.2",
+        "league/color-extractor": "^0.4.0",
         "yajra/laravel-datatables-oracle": "^10.3.1"
     },
     "require-dev": {
