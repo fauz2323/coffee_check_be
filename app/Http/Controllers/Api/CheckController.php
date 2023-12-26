@@ -209,7 +209,11 @@ class CheckController extends Controller
 
         $image = $request->file('image');
         $imageName = Uuid::uuid1() . '.' . $image->getClientOriginalExtension();
-        $uploadPath = public_path('storage/images/');
+        if (App::environment('local')) {
+            $uploadPath = public_path('storage/images/');
+        } else {
+            $uploadPath = public_path('../../public_html/storage/images/');
+        }
         // Store the original image
         $image->move($uploadPath, $imageName);
         // Resize the image
