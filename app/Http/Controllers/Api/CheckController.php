@@ -97,11 +97,11 @@ class CheckController extends Controller
                 }
             }
 
-            if ($request->type == 'mentah' && $greenCount >= 100) {
+            if ($request->type == 'mentah' && $greenCount >= 20) {
                 $typeData = 'mentah';
-            } elseif ($request->type == 'matang' && $redCount >= 100) {
+            } elseif ($request->type == 'matang' && $redCount >= 20) {
                 $typeData = 'matang';
-            } elseif ($request->type == 'setengah matang' && $yellowCount >= 100) {
+            } elseif ($request->type == 'setengah matang' && $yellowCount >= 20) {
                 $typeData = 'setengah matang';
             } else {
                 $typeData = 'tidak terdeteksi';
