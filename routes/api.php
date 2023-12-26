@@ -35,5 +35,5 @@ Route::middleware('auth:sanctum')->group(function () {
     //history
     Route::get('/history', [App\Http\Controllers\Api\HistoryController::class, 'getHistory']);
     Route::post('/history/detail', [App\Http\Controllers\Api\HistoryController::class, 'detailHistory']);
-    Route::post('/upload', [App\Http\Controllers\Api\CheckController::class, 'upload3']);
+    Route::post('/upload', [App\Http\Controllers\Api\CheckController::class, 'uploadImage']);
 });

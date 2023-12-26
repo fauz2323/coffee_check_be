@@ -28,7 +28,7 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::get('/admin/user', [App\Http\Controllers\Admin\UserController::class, 'index'])->name('user.index');
 Route::get('/admin/user/detail/{id}', [App\Http\Controllers\Admin\UserController::class, 'detail'])->name('user.detail');
 Route::get('/admin/user/delete/{id}', [App\Http\Controllers\Admin\UserController::class, 'delete'])->name('user.delete');
-Route::post('/admin/user/changeProfile/{id}', [App\Http\Controllers\Admin\UserController::class, 'changeProfile'])->name('user.changeProfile');
+Route::post('/admin/user/changepass/{id}', [App\Http\Controllers\Admin\UserController::class, 'changePassword'])->name('user.changePassword');
 
 //history
 Route::get('/admin/history', [App\Http\Controllers\Admin\HistoryAdminController::class, 'index'])->name('history.index');
@@ -36,4 +36,7 @@ Route::get('/admin/history', [App\Http\Controllers\Admin\HistoryAdminController:
 //hexcolor
 Route::get('/admin/hexcolor', [App\Http\Controllers\Admin\HexColorController::class, 'index'])->name('hexcolor.index');
 Route::post('/admin/hexcolor/store', [App\Http\Controllers\Admin\HexColorController::class, 'store'])->name('hexcolor.store');
+Route::post('/admin/hexcolor/edit/{id}', [App\Http\Controllers\Admin\HexColorController::class, 'storeEdit'])->name('hexcolor.edit');
 Route::get('/admin/hexcolor/delete/{id}', [App\Http\Controllers\Admin\HexColorController::class, 'delete'])->name('hexcolor.delete');
+Route::get('/admin/hexcolor/view/{id}', [App\Http\Controllers\Admin\HexColorController::class, 'editView'])->name('hexcolor.view');
+

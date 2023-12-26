@@ -23,7 +23,7 @@ class HexColorController extends Controller
             return DataTables::of($user)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="' . route('user.detail', Crypt::encrypt($row->id)) . '" data-toggle="tooltip"  data-id="' . $row->id . '" data-original-title="Edit" class="edit btn btn-primary btn-sm editCustomer">Detail</a> ';
+                    $btn = '<a href="' . route('hexcolor.view', Crypt::encrypt($row->id)) . '" data-toggle="tooltip"  data-id="' . $row->id . '" data-original-title="Edit" class="edit btn btn-primary btn-sm editCustomer">Detail</a> ';
                     $btn .= '<a href="' . route('hexcolor.delete', Crypt::encrypt($row->id)) . '" data-toggle="tooltip"  data-id="' . $row->id . '" data-original-title="Edit" class="edit btn btn-danger btn-sm editCustomer">Delete</a> ';
                     return $btn;
                 })
@@ -36,6 +36,29 @@ class HexColorController extends Controller
         }
 
         return view('admin.rgb.index');
+    }
+
+    function editView($id) {
+        $data = HexColor::find(Crypt::decrypt($id));
+        return view('admin.rgb.edit',compact('data'));
+    }
+
+    function storeEdit(Request $request) {
+         $request->validate([
+            'type' => 'required',
+            'red' => 'required',
+            'green' => 'required',
+            'blue' => 'required',
+        ]);
+
+        $hexColor = HexColor::find(Crypt::decrypt($request->id));
+        $hexColor->type = $request->type;
+        $hexColor->red = $request->red;
+        $hexColor->green = $request->green;
+        $hexColor->blue = $request->blue;
+        $hexColor->save();
+
+        return redirect()->route('hexcolor.index')->with('success', 'Hex Color Added Successfully');
     }
 
     function store(Request $request)

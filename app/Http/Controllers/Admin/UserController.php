@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\HistoryCheck;
 use App\Models\UserApps;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Hash;
 use Yajra\DataTables\DataTables;
 
 class UserController extends Controller
@@ -36,22 +38,31 @@ class UserController extends Controller
         return view('admin.user.index');
     }
 
-    function detail($id)
+    function detail(Request $request, $id)
     {
         $user = UserApps::find(Crypt::decrypt($id));
+        if ($request->ajax()) {
+            $user = HistoryCheck::where('user_id', $user->id)->get();
+            return DataTables::of($user)
+                ->addIndexColumn()
+                ->addColumn('date', function ($row) {
+                    $date = $row->created_at->format('d-m-Y');
+                    return $date;
+                })
+                ->rawColumns(['date'])
+                ->make(true);
+        }
         return view('admin.user.detail', compact('user'));
     }
 
-    function changeProfile(Request $request, $id)
+    function changePassword(Request $request, $id)
     {
         $request->validate([
-            'name' => 'required',
-            'email' => 'required',
+            'password' => 'required',
         ]);
 
         $user = UserApps::find($id);
-        $user->name = $request->name;
-        $user->email = $request->email;
+        $user->password = Hash::make($request->password);
         $user->save();
 
         return redirect()->back()->with('success', 'User updated successfully.');

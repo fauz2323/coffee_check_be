@@ -24,8 +24,10 @@ class CheckController extends Controller
             'image' => 'required|max:2048',
             'type' => 'required',
         ]);
-        $imageService = new ImageService;
-        $rgbType = HexColor::where('type', $request->type)->first();
+
+        $red = 0;
+        $green = 0;
+        $blue = 0;
 
         if ($request->hasFile('image')) {
             $image = $request->file('image');
@@ -34,36 +36,99 @@ class CheckController extends Controller
             // Store the original image
             $image->move($uploadPath, $imageName);
             // Resize the image
-            $resizedImage = Image::make($uploadPath . $imageName);
-            // Save the resized image
-            $resizedImage->save($uploadPath . 'resized_' . $imageName);
-            $resizedImage = Image::make($uploadPath . 'resized_' . $imageName);
+            if ($image->getClientOriginalExtension() == 'png') {
+                $images = imagecreatefrompng($uploadPath . $imageName);
+            } else {
+                $images = imagecreatefromjpeg($uploadPath . $imageName);
+            }
+            $redCount = 0;
+            $greenCount = 0;
+            $yellowCount = 0;
 
-            $checkImage = $imageService->checkDominantColor($resizedImage);
+            $width = imagesx($images);
+            $height = imagesy($images);
 
-            // $history = new HistoryCheck();
-            // $history->user_id = Auth::user()->id;
-            // $history->uuid = Uuid::uuid4();
-            // $history->name = $image->getClientOriginalName();
-            // $history->type = $iamgeRGBCount;
-            // $history->red = $red;
-            // $history->green = $green;
-            // $history->blue = $blue;
-            // $history->save();
+            for ($x = 0; $x < $width; $x++) {
+                for ($y = 0; $y < $height; $y++) {
+                    $color = imagecolorat($images, $x, $y);
+                    $rgb = imagecolorsforindex($images, $color);
 
-            // $imageHistoty = new ImageHistory;
-            // $imageHistoty->history_id = $history->id;
-            // $imageHistoty->image = $imageName;
-            // $imageHistoty->uuid = Uuid::uuid4();
-            // $imageHistoty->save();
+                    if ($request->type == 'mentah') {
+                        // Check for predominant colors (this is a very basic example)
+                        if ($rgb['green'] > $rgb['red'] && $rgb['green'] > $rgb['blue']) {
+                            $greenCount++;
+                            $red = $rgb['red'];
+                            $green = $rgb['green'];
+                            $blue = $rgb['blue'];
+                        }
+                    }
+
+                    if ($request->type == 'matang') {
+                        $redThreshold = 150;
+                        $greenThreshold = 50;
+                        $blueThreshold = 50;
+
+                        // Periksa apakah nilai-nilai RGB berada dalam rentang yang mendekati merah
+                        if ($rgb['red'] >= $redThreshold && $rgb['green'] <= $greenThreshold && $rgb['blue'] <= $blueThreshold) {
+                            $redCount++;
+                            $red = $rgb['red'];
+                            $green = $rgb['green'];
+                            $blue = $rgb['blue'];
+                        }
+                    }
+
+                    if ($request->type == 'setengah matang') {
+                        $redThreshold = 150;
+                        $greenThreshold = 150;
+                        $blueThreshold = 50;
+                        // Periksa apakah nilai-nilai RGB berada dalam rentang yang mendekati kuning
+                        if ($rgb['red'] >= $redThreshold && $rgb['green'] >= $greenThreshold && $rgb['blue'] <= $blueThreshold) {
+                            $yellowCount++;
+                            $red = $rgb['red'];
+                            $green = $rgb['green'];
+                            $blue = $rgb['blue'];
+                        }
+                    }
+                }
+            }
+
+            if ($request->type == 'mentah' && $greenCount >= 100) {
+                $typeData = 'mentah';
+            } elseif ($request->type == 'matang' && $redCount >= 100) {
+                $typeData = 'matang';
+            } elseif ($request->type == 'setengah matang' && $yellowCount >= 100) {
+                $typeData = 'setengah matang';
+            } else {
+                $typeData = 'tidak terdeteksi';
+            }
+
+
+            $history = new HistoryCheck();
+            $history->user_id = Auth::user()->id;
+            $history->uuid = Uuid::uuid4();
+            $history->name = $image->getClientOriginalName();
+            $history->type = $typeData;
+            $history->red = $red;
+            $history->green = $green;
+            $history->blue = $blue;
+            $history->save();
+
+            $imageHistoty = new ImageHistory;
+            $imageHistoty->history_id = $history->id;
+            $imageHistoty->image = $imageName;
+            $imageHistoty->uuid = Uuid::uuid4();
+            $imageHistoty->save();
 
             return response()->json([
                 'message' => 'success upload image',
                 'image' => $imageName,
-                'dataType' => $checkImage['color'],
-                'red' => $checkImage['r'],
-                'green' => $checkImage['g'],
-                'blue' => $checkImage['b'],
+                'dataType' => $typeData,
+                'red' => $red,
+                'green' => $green,
+                'blue' => $blue,
+                'count' => [
+                    $yellowCount, $redCount, $greenCount
+                ]
             ], 200);
         } else {
             return response()->json([
