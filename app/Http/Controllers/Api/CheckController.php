@@ -9,6 +9,7 @@ use App\Models\ImageHistory;
 use App\Services\ImageService;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Intervention\Image\Facades\Image;
 use League\ColorExtractor\Color;
@@ -268,5 +269,14 @@ class CheckController extends Controller
             'g' => $greenCount,
             'y' => $yellowCount
         ]);
+    }
+
+    function testStaging()
+    {
+        if (App::environment('local')) {
+            return response()->json(['success' => true]);
+        } else {
+            return response()->json(['success' => false]);
+        }
     }
 }

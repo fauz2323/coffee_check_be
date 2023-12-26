@@ -37,3 +37,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/history/detail', [App\Http\Controllers\Api\HistoryController::class, 'detailHistory']);
     Route::post('/upload', [App\Http\Controllers\Api\CheckController::class, 'uploadImage']);
 });
+
+Route::get('/check', [App\Http\Controllers\Api\CheckController::class, 'testStaging']);
