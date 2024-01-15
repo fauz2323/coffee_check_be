@@ -97,20 +97,20 @@
             <!-- Brand Logo Light -->
             <a href="index.html" class="logo logo-light">
                 <span class="logo-lg">
-                    <img src="{{ asset('assets/images/logo.png') }}" alt="logo">
+                    <img src="{{ asset('assets/images/logox.png') }}" alt="logo">
                 </span>
                 <span class="logo-sm">
-                    <img src="{{ asset('assets/images/logo-sm.png') }}" alt="small logo">
+                    <img src="{{ asset('assets/images/logo-smx.png') }}" alt="small logo">
                 </span>
             </a>
 
             <!-- Brand Logo Dark -->
             <a href="index.html" class="logo logo-dark">
                 <span class="logo-lg">
-                    <img src="{{ asset('assets/images/logo-dark.png') }}" alt="dark logo">
+                    <img src="{{ asset('assets/images/logo-darkx.png') }}" alt="dark logo">
                 </span>
                 <span class="logo-sm">
-                    <img src="{{ asset('assets/images/logo-sm.png') }}" alt="small logo">
+                    <img src="{{ asset('assets/images/logo-smx.png') }}" alt="small logo">
                 </span>
             </a>
 
@@ -200,7 +200,7 @@
                         <div class="col-12 text-center">
                             <script>
                                 document.write(new Date().getFullYear())
-                            </script> © Velonic - Theme by <b>Techzaa</b>
+                            </script> © Theme by <b>Adi Randhani</b>
                         </div>
                     </div>
                 </div>
