@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\HistoryCheck;
 use App\Models\User;
 use App\Models\UserApps;
 use Illuminate\Http\Request;
@@ -70,10 +71,14 @@ class AuthController extends Controller
     function auth()
     {
         $user = UserApps::find(Auth::user()->id);
+        $dataSalah = HistoryCheck::where('type', 'tidak terdeteksi')->count();
+        $data = HistoryCheck::count();
+        $persentase = ($data - $dataSalah) / $data * 100;
 
         return response()->json([
             'message' => 'Login successful',
-            'user' => $user
+            'user' => $user,
+            'persentase' => $persentase
         ]);
     }
 }
