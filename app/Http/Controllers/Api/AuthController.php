@@ -73,7 +73,12 @@ class AuthController extends Controller
         $user = UserApps::find(Auth::user()->id);
         $dataSalah = HistoryCheck::where('type', 'tidak terdeteksi')->count();
         $data = HistoryCheck::count();
-        $persentase = ($data - $dataSalah) / $data * 100;
+        if ($data>0 ) {
+            $persentase = ($data - $dataSalah) / $data * 100;
+        }else{
+            $persentase = 0;
+        }
+
 
         return response()->json([
             'message' => 'Login successful',
